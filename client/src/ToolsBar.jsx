@@ -34,12 +34,8 @@ const ToolsBar=(props)=>{
             <input type="range"  min="1" max="50" className="brushWidthSelector"  onChange={(e)=>{changeBrushSize(e.target.value)}} />
             
             <div className="BottomButtonsBox">
-              <button className="tglbtn SaveButton">
-                Save
-            </button>
-
-            <button className="tglbtn ClearButton" onClick={()=>{
-                const canvas = document.querySelector("canvas");
+            <button className="ClearButton" onClick={()=>{ /* added Clear the canvas */
+                const canvas =document.querySelector("canvas");
                 const context = canvas.getContext("2d");
                 context.clearRect(0, 0, canvas.width, canvas.height);
             }}>

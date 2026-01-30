@@ -1,4 +1,4 @@
-import {useRef} from "react";
+import {useRef,useState} from "react";
 import Canvas from "./canvas.jsx";
 import ToolsBar from "./ToolsBar.jsx"
 import './App.css'
@@ -8,6 +8,7 @@ const App=()=>{
 const activeTool =useRef("brush");
 const activeColor =useRef("#000000");
 const brushSize =useRef(5);
+
 const changeActiveTool=(tool)=>{
   activeTool.current=tool;
 }

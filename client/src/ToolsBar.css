@@ -39,6 +39,7 @@
     border:none;
     cursor:pointer;
     margin:10px;
+    border-radius:220px;
 
 }
 
@@ -50,29 +51,18 @@
     margin:10px;
 }
 
-.BottomButtonsBox{
-    display:flex;
-    flex-direction:column;
-}
 
-
-
-.tglbtn{
+.ClearButton{
+    width:100%;
+    background-color:transparent;
+    background-color: rgb(31, 125, 240);
     border-radius:10px;
+    color:white;
     font-weight: bold;
-  cursor: pointer;
+   cursor: pointer;
     padding:10px 20px;
     border:none;
     font-size:25px;
     margin:20px 0px
 
-
-}
-
-.SaveButton{
-    background-color:rgb(36, 146, 225);
-}
-.ClearButton{
-    background-color:transparent;
-    border:1px solid black;
 }
