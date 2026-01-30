@@ -14,20 +14,18 @@ const Canvas = (props) => {
   canvas.height = rect.height;
     context.lineCap = "round";
   context.lineJoin = "round";
-  context.lineWidth = brushSize;
-  context.strokeStyle = activeColor;
    
 
     const beginDrawing=(e)=>{
       isDrawing.current=true;
       context.beginPath()
       context.moveTo(e.offsetX,e.offsetY);
-      context.lineWidth=brushSize;
+      context.lineWidth=brushSize.current;
 
-      if(activeTool==="eraser"){
+      if(activeTool.current==="eraser"){
         context.strokeStyle="#FFFFFF";
       }else{
-        context.strokeStyle=activeColor;
+        context.strokeStyle=activeColor.current;
       }
 
     }
