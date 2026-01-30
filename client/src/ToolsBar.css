@@ -5,6 +5,8 @@
     border:1px solid black;
     border-radius:20px;
     padding:20px;
+    display:flex;
+    flex-direction: column;
 }
 
 .ToolsBarButtonBox{
@@ -46,4 +48,31 @@
     border:none;
     cursor:pointer;
     margin:10px;
+}
+
+.BottomButtonsBox{
+    display:flex;
+    flex-direction:column;
+}
+
+
+
+.tglbtn{
+    border-radius:10px;
+    font-weight: bold;
+  cursor: pointer;
+    padding:10px 20px;
+    border:none;
+    font-size:25px;
+    margin:20px 0px
+
+
+}
+
+.SaveButton{
+    background-color:rgb(36, 146, 225);
+}
+.ClearButton{
+    background-color:transparent;
+    border:1px solid black;
 }
