@@ -20,18 +20,18 @@ const ToolsBar=(props)=>{
      return(
         <div className="ToolsBarContainer">
             <h1>Options</h1>
-            <div className={activeToolState==="brush"?"ToolsBarBox active":"ToolsBarBox"}>
+            <div className={activeToolState==="brush"?"ToolsBarButtonBox active":"ToolsBarButtonBox"}>
             
                 <FaPaintBrush size={24} />
-                <button className={activeToolState==="brush"?"toolButton active":"toolButton"} onClick={changeToBrush}>Brush</button>
+                <button className={activeToolState==="brush"?"toolButton  active":"toolButton "} onClick={changeToBrush}>Brush</button>
             </div>
-            <div className={activeToolState==="eraser"?"ToolsBarBox active":"ToolsBarBox"}>
+            <div className={activeToolState==="eraser"?"ToolsBarButtonBox active":"ToolsBarButtonBox"}>
             
                 <FaEraser size={24} />
-                <button className={activeToolState==="eraser"?"toolButton active":"toolButton"} onClick={changeToEraser}>Eraser</button>
+                <button className={activeToolState==="eraser"?"toolButton  active":"toolButton "} onClick={changeToEraser}>Eraser</button>
             </div>
-            <input type="color" className="colorSelector" onChange={(e)=>{changeActiveColor(e.target.value)}}/> 
-            <input type="range" min="1" max="50" className="brushWidthSelector"  onChange={(e)=>{changeBrushSize(e.target.value)}} />
+            <input type="color" disabled={activeToolState !== "brush"} className="colorSelector" onChange={(e)=>{changeActiveColor(e.target.value)}}/> {/* disabled color picker when eraser is on */}
+            <input type="range"  min="1" max="50" className="brushWidthSelector"  onChange={(e)=>{changeBrushSize(e.target.value)}} />
 
         </div>
     )

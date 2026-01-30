@@ -24,6 +24,7 @@ const Canvas = (props) => {
 
       if(activeTool.current==="eraser"){
          context.globalCompositeOperation = "destination-out";
+         
       }else{
         context.globalCompositeOperation = "source-over";
         context.strokeStyle=activeColor.current;
