@@ -8,6 +8,8 @@ Canvas is a React-based drawing application built using the HTML5 Canvas API. It
 - Eraser tool
 - Clear canvas functionality
 - Responsive canvas sizing
+- True eraser implemented using canvas pixel compositing
+- Canvas optimized to avoid unnecessary React re-renders
 
 ## Tech Stack
 - React
@@ -22,8 +24,16 @@ Canvas is a React-based drawing application built using the HTML5 Canvas API. It
 - Applying current brush color and width at the start of each stroke
 - Managing imperative canvas APIs inside a React app
 
+## Technical Notes
+
+- Canvas drawing logic is handled imperatively using the Canvas 2D API
+- Toolbar controls update drawing behavior without triggering canvas re-renders
+- Eraser is implemented using `globalCompositeOperation = "destination-out"`
+
+
 ## Project Status
-🚧 In progress — features and improvements are added incrementally with meaningful Git commits.
+Current version implements the core drawing tools.
+Real-time collaboration and persistence will be added next.
 
 ## Setup Instructions
 ```bash
