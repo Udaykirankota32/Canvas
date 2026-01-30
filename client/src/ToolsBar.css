@@ -1,0 +1,44 @@
+.ToolsBarContainer{
+    background-color: white;
+    width:25%;
+    height:100%;
+    border:1px solid black;
+    border-radius:20px;
+    padding:20px;
+}
+
+.ToolsBarBox{
+    display:flex;
+    flex-direction: row;
+    margin:20px 10px;
+}
+.active{
+  color: rgb(16, 143, 216);
+  font-weight: bold;
+    
+}
+
+.toolButton{
+    border:0px;
+    padding-left:10px;
+    background-color: transparent;
+    font-size: 18px;
+    cursor: pointer;
+}
+
+.colorSelector{
+    width:100%;
+    height:40px;
+    border:none;
+    cursor:pointer;
+    margin:10px;
+
+}
+
+.brushWidthSelector{
+    width:100%;
+    height:40px;
+    border:none;
+    cursor:pointer;
+    margin:10px;
+}
