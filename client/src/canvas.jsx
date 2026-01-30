@@ -23,8 +23,9 @@ const Canvas = (props) => {
       context.lineWidth=brushSize.current;
 
       if(activeTool.current==="eraser"){
-        context.strokeStyle="#FFFFFF";
+         context.globalCompositeOperation = "destination-out";
       }else{
+        context.globalCompositeOperation = "source-over";
         context.strokeStyle=activeColor.current;
       }
 
