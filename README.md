@@ -48,12 +48,42 @@ This project uses Socket.IO to enable real-time collaboration between multiple u
 4. Server broadcasts stroke data to other connected clients
 5. Remote clients render the stroke locally on their canvas
 
+## Real-time Collaboration
+
+This project supports multiple users drawing on the same canvas in real time using Socket.IO.
+
+- Each drawing action is sent as a drawing command (tool, color, brush size, coordinates).
+- The server broadcasts drawing data to all connected users except the sender.
+- Canvas rendering is handled imperatively using the HTML Canvas API.
+
+## Late Joiner Synchronization
+
+When a new user joins an ongoing session, they receive the existing canvas content instead of a blank screen.
+
+This is implemented by:
+- Storing drawing commands on the server as canvas history.
+- Replaying the stored commands on the client when a new user connects.
+- Using an explicit client request for canvas history to avoid race conditions where events are emitted before listeners are attached.
+
+This ensures consistent canvas state for all users.
+
+### Canvas Persistence
+- Late joiners receive existing drawings via server-side history replay
+- Canvas state persists across refreshes while server is running
+- Persistent canvas screen is maintained even after the refresh 
+
+## Limitations
+
+- Canvas state persists across refreshes as long as the server is running.
+- Long-term persistence (database-backed storage) is not implemented yet.
+- Undo/redo and room-based isolation are planned future improvements.
+
 ## Project Status
 
 - Transport layer: Completed
 - Real-time drawing sync: Completed
-- Late joiner support: Pending
-- Undo/Redo: Planned
+- Late joiner support: completed
+- Undo/Redo: pending
 
 
 # NOTE
