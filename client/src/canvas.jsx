@@ -19,12 +19,33 @@ const Canvas = (props) => {
   canvas.height = rect.height;
     context.lineCap = "round";
   context.lineJoin = "round";
+  
+  const handleCanvasData=(data)=>{
+    context.beingPath(); 
+     if(data.Tool==="eraser"){
+        context.globalCompositeOperation = "destination-out";
+    }else{
+        context.globalCompositeOperation = "source-over";
+        context.strokeStyle=data.color;
+    }  
+    context.moveTo(data.fromx,data.fromy);
+    context.lineTo(data.toX,data.toY);
+    context.lineWidth=data.brushSize;      
+  }
+    
+
+
+  socket.on("canvas-data",handleCanvasData);
+  
+  
+
    
 
     const beginDrawing=(e)=>{
       isDrawing.current=true;
       context.beginPath()
       context.moveTo(e.offsetX,e.offsetY);
+      lastpos.current={x:e.offsetX,y:e.offsetY};
       
       context.lineWidth=brushSize.current;
 
@@ -83,6 +104,7 @@ const Canvas = (props) => {
       canvas.removeEventListener("mousemove",draw),
       canvas.removeEventListener("mouseup",stopDrawing),
       canvas.removeEventListener("mouseout",stopDrawing)
+      socket.off("canvas-data",handleCanvasData)
     }
   },[]);
 

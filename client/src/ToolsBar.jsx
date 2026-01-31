@@ -4,8 +4,8 @@ import './ToolsBar.css'
 
 const ToolsBar=(props)=>{
 
-     const {activeTool,changeActiveTool,changeActiveColor,changeBrushSize}=props;
-     const [activeToolState,changeActiveToolState]=useState(activeTool);
+     const {changeActiveTool,changeActiveColor,changeBrushSize}=props;
+     const [activeToolState,changeActiveToolState]=useState("brush");
 
     const changeToBrush=()=>{
         changeActiveTool("brush");
