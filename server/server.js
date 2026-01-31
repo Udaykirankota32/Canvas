@@ -16,16 +16,16 @@ const io =new Server(server,{
     }
 })
 
-io.on("connection",(sockets)=>{
-    console.log(`User connected: ${sockets.id}`)
+io.on("connection",(socket)=>{
+    console.log(`User connected: ${socket.id}`)
 
-    sockets.on("canvas-data",(data)=>{
+    socket.on("canvas-data",(data)=>{
         //broadcasting the data to all other clients except the sender
-        sockets.broadcast.emit("canvas-data",data);
+        socket.broadcast.emit("canvas-data",data);
     })
 
-    sockets.on("disconnect",()=>{
-        console.log(`User disconnected: ${sockets.id}`)
+    socket.on("disconnect",()=>{
+        console.log(`User disconnected: ${socket.id}`)
     })
    
 })

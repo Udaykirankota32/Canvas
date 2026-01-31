@@ -1,5 +1,5 @@
 import {useRef,useEffect} from "react";
-import socket from './websocket.js'
+import socket from './websocket.jsx'
 import Canvas from "./canvas.jsx";
 import ToolsBar from "./ToolsBar.jsx"
 import './App.css'
