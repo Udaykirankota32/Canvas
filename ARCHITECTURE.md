@@ -24,3 +24,23 @@ Establish a persistent, real-time communication channel between multiple clients
 ### Communication Model
 - Bi-directional event-based communication using Socket.IO
 - Connection lifecycle: connect → disconnect
+
+
+## Phase 2: Drawing Event Synchronization
+
+### Goal
+Synchronize drawing actions across multiple connected clients in real time.
+
+### Approach
+- Clients emit stroke events containing drawing metadata
+- Server broadcasts events to other clients
+- Each client renders remote strokes locally on canvas
+
+# Data storing 
+  {
+    Tool,
+    Color,
+    BrushWidth,
+    {fromX,fromY},
+    {ToX,ToY}
+  }

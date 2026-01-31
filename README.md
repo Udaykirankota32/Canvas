@@ -36,10 +36,15 @@ Canvas is a React-based drawing application built using the HTML5 Canvas API. It
 - Client successfully connects and disconnects from server
 - Transport layer established for future multi-user canvas sync
 
+# NOTE
+
+Your server Responsibility:
+
+Receive drawing data from one socket
+Broadcast it to all other sockets
 
 ## Project Status
-Current version implements the core drawing tools.
-Real-time collaboration and persistence will be added next.
+- Real-time multi-user collaboration (in progress)
 
 ## Setup Instructions
 ```bash

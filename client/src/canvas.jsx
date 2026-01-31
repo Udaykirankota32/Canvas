@@ -1,12 +1,17 @@
 import { useRef, useEffect } from "react";
+import socket from './websocket.js'
 import './canvas.css'
 
 const Canvas = (props) => {
   const {activeTool, activeColor, brushSize}=props;
   const canvasRef = useRef(null);
   const isDrawing=useRef(false);
+  const lastpos=useRef({x:0,y:0});
+  
+  
 
   useEffect(() => {
+    
     const canvas = canvasRef.current;
     const context = canvas.getContext("2d");
     const rect = canvas.getBoundingClientRect();
@@ -20,6 +25,7 @@ const Canvas = (props) => {
       isDrawing.current=true;
       context.beginPath()
       context.moveTo(e.offsetX,e.offsetY);
+      
       context.lineWidth=brushSize.current;
 
       if(activeTool.current==="eraser"){
@@ -29,14 +35,35 @@ const Canvas = (props) => {
         context.globalCompositeOperation = "source-over";
         context.strokeStyle=activeColor.current;
       }
-
+      
     }
 
     const draw=(e)=>{
       if(!isDrawing.current) return ;
 
+      const fromx = lastpos.current.x;
+      const fromy = lastpos.current.y;
+      const toX = e.offsetX;
+      const toY = e.offsetY;
+
+      lastpos.current={x:toX,y:toY};
+
+      const userCanvasData={
+        Tool : activeTool.current,
+        color : activeColor.current,
+        brushSize : brushSize.current,  
+        fromx,
+        fromy,
+        toX,
+        toY
+      }
+
       context.lineTo(e.offsetX,e.offsetY);
+
       context.stroke()
+      socket.emit("canvas-data",userCanvasData);
+
+
     }
 
     const stopDrawing=()=>{
@@ -57,7 +84,7 @@ const Canvas = (props) => {
       canvas.removeEventListener("mouseup",stopDrawing),
       canvas.removeEventListener("mouseout",stopDrawing)
     }
-  }, [activeColor, brushSize, activeTool]);
+  },[]);
 
   return (
     <canvas 

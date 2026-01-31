@@ -19,12 +19,20 @@ const io =new Server(server,{
 io.on("connection",(sockets)=>{
     console.log(`User connected: ${sockets.id}`)
 
+    sockets.on("canvas-data",(data)=>{
+        //broadcasting the data to all other clients except the sender
+        sockets.broadcast.emit("canvas-data",data);
+    })
+
     sockets.on("disconnect",()=>{
         console.log(`User disconnected: ${sockets.id}`)
     })
    
 })
 
+
+
 server.listen  (3000,()=>{
     console.log("Server is running on port 3000")
 })
+
