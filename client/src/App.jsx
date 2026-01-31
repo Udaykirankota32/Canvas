@@ -1,9 +1,26 @@
-import {useRef,useState} from "react";
+import {useRef,useEffect} from "react";
+import socket from './websocket.js'
 import Canvas from "./canvas.jsx";
 import ToolsBar from "./ToolsBar.jsx"
 import './App.css'
 
 const App=()=>{
+
+  useEffect(()=>{
+      socket.on("connect",()=>{
+        console.log("conected to server ",socket.id);
+
+      })
+      return ()=>{
+        socket.disconnect();
+        
+      }
+  },[])
+
+
+
+
+
 
 const activeTool =useRef("brush");
 const activeColor =useRef("#000000");
