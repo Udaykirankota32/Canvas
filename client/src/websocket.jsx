@@ -1,10 +1,17 @@
-import {io } from "socket.io-client"  ;
+import { io } from "socket.io-client";
+let socket=null;
 
+export const initiateSocketConnection=()=>{
+    if(!socket ){
+        socket=io("http://localhost:3000",{
+            transports:['websocket','polling'],
+            autoConnect:true,
 
-const socket = io("http://localhost:3000",{
-    transports:["websocket","polling"]
-});
+        }
+        )};
+        return socket; 
+    }
 
-
-
-export default socket;
+export const getSocket=()=>{
+    return socket;
+};

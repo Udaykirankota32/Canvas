@@ -2,36 +2,32 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family:"Roboto";
+  font-family: "Roboto";
 }
 
-
-.Canvas-Editor-Container{
-    width:100vw;
-    height:100vh;
-    background-color: #119aef;
-    padding:10px;
-    display:flex;
-    flex-direction:row;
-    justify-content: center;
-    align-items:center;
-
+.Canvas-Editor-Container {
+  width: 100vw;
+  height: 100vh;
+  background-color: #119aef;
+  padding: 10px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
 }
-.Canvas-Editor-BoxContainer{
-    width:100%;
-    height: 90%;
-    display:flex;
-    flex-direction:row;
-    justify-content: space-between;
-
-
+.Canvas-Editor-BoxContainer {
+  width: 100%;
+  height: 90%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
 }
 
 .Canvas-Container {
   width: 80%;
   height: 100%;
   background: white;
-  border:1px solid black;
+  border: 1px solid black;
   border-radius: 20px;
   display: flex;
 }

@@ -1,12 +1,14 @@
 import express from "express";
 
-const app = express();
+
 import { createServer } from "http";
 import { Server } from "socket.io";
 import cors from "cors";
 
+const app = express();
 app.use(cors())
 
+let CanvaArray=[];
 const  server   = createServer(app)
 
 const io =new Server(server,{
@@ -19,9 +21,14 @@ const io =new Server(server,{
 io.on("connection",(socket)=>{
     console.log(`User connected: ${socket.id}`)
 
+    socket.on("request-for-history",()=>{    //when a new user connects and requests for existing canvas data
+        socket.emit("usersCanvasHistory",CanvaArray);  //sending the existing canvas data to the newly connected user
+    });
+
     socket.on("canvas-data",(data)=>{
-        //broadcasting the data to all other clients except the sender
-        socket.broadcast.emit("canvas-data",data);
+        CanvaArray.push(data);  //saving the Canvas data of each user in server memory
+        socket.broadcast.emit("canvas-data",data);         //broadcasting the data to all other clients except the sender
+
     })
 
     socket.on("disconnect",()=>{

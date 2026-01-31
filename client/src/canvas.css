@@ -1,12 +1,11 @@
-.canvas{
-    width:100%;
-    height:100%;
-    background-color: white;
-    margin:0px;
-    display:block;
-    color:black;
-    border:1px;
-    border-radius:20px;
-    cursor: crosshair; /* added cursor style for canvas */
-
+.canvas {
+  width: 100%;
+  height: 100%;
+  background-color: white;
+  margin: 0px;
+  display: block;
+  color: black;
+  border: 1px;
+  border-radius: 20px;
+  cursor: crosshair; /* added cursor style for canvas */
 }
