@@ -30,21 +30,40 @@ Canvas is a React-based drawing application built using the HTML5 Canvas API. It
 - Toolbar controls update drawing behavior without triggering canvas re-renders
 - Eraser is implemented using `globalCompositeOperation = "destination-out"`
 
-## Real-Time Collaboration (In Progress)
 
-- Socket.IO server set up for real-time communication
-- Client successfully connects and disconnects from server
-- Transport layer established for future multi-user canvas sync
+## Real-Time Collaboration
 
-<<<<<<< HEAD
+This project uses Socket.IO to enable real-time collaboration between multiple users.
+
+- Each client establishes a persistent socket connection with the server
+- Drawing actions are emitted as lightweight stroke events
+- The server relays drawing events to all connected clients except the sender
+- Remote clients replay received stroke events on their local canvas
+
+## Drawing Synchronization Flow
+
+1. User draws on the canvas
+2. Client captures stroke data (tool, color, width, coordinates)
+3. Stroke data is emitted to the server via Socket.IO
+4. Server broadcasts stroke data to other connected clients
+5. Remote clients render the stroke locally on their canvas
+
+## Project Status
+
+- Transport layer: Completed
+- Real-time drawing sync: Completed
+- Late joiner support: Pending
+- Undo/Redo: Planned
+
+
 # NOTE
 
 Your server Responsibility:
 
 Receive drawing data from one socket
 Broadcast it to all other sockets
-=======
->>>>>>> b1b5d14bd288c73b2a2430534bdfc72ee5421a48
+
+
 
 ## Project Status
 - Real-time multi-user collaboration (in progress)
