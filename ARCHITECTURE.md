@@ -29,18 +29,37 @@ Establish a persistent, real-time communication channel between multiple clients
 ## Phase 2: Drawing Event Synchronization
 
 ### Goal
-Synchronize drawing actions across multiple connected clients in real time.
+Synchronize canvas drawing actions across multiple users in real time.
 
 ### Approach
-- Clients emit stroke events containing drawing metadata
-- Server broadcasts events to other clients
-- Each client renders remote strokes locally on canvas
+- Clients emit stroke events containing:
+  - Tool type
+  - Brush color
+  - Brush width
+  - Start and end coordinates
+- Server relays stroke events to all connected clients except the sender
+- Each client renders remote strokes locally on its own canvas
+
+### Design Decisions
+- Canvas remains stateless
+- Server acts as a relay and does not render or store canvas state
+- Drawing logic is imperative and independent of React rendering
 
 # Data storing 
   {
     Tool,
     Color,
     BrushWidth,
-    {fromX,fromY},
-    {ToX,ToY}
+    fromX,fromY,
+    ToX,ToY,
   }
+
+# server Responsibility
+  Receive drawing data from one socket
+  Broadcast it to all other sockets
+
+## Key Architectural Principles
+
+- Separation of concerns between UI, canvas rendering, and networking
+- Event-driven synchronization instead of state replication
+- Avoidance of React re-renders during drawing for performance
