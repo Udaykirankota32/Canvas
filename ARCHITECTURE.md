@@ -273,4 +273,59 @@ User indicators will display real-time cursor positions of other active users.
 This feature is intentionally deferred to maintain system stability and focus on core collaboration functionality.
 
 
+##  Phase-8  Undo / Redo Architecture (Attempted – Incomplete)
+
+### Goal
+Provide undo and redo functionality in a collaborative, multi-user canvas environment.
+
+### Intended Design
+
+Undo and redo were designed using a **command history replay model**, based on the following principles:
+
+- Each drawing action is stored as an immutable stroke command on the server.
+- Each stroke contains metadata such as:
+  - User ID
+  - Tool type
+  - Brush size
+  - Color
+  - Start and end coordinates
+- The server maintains:
+  - A global stroke history (authoritative state)
+  - A per-user redo stack
+
+### Intended Undo Flow
+1. A client emits an `undo` request with its user ID.
+2. The server locates the most recent stroke created by that user.
+3. The stroke is removed from the global history and stored in the user’s redo stack.
+4. The server broadcasts the updated stroke history to all clients.
+5. Clients clear the canvas and replay the full history.
+
+### Intended Redo Flow
+1. A client emits a `redo` request with its user ID.
+2. The server restores the most recent undone stroke from the user’s redo stack.
+3. The stroke is reinserted into the global history.
+4. The updated history is broadcast to all clients.
+5. Clients replay the canvas state.
+
+### Current Status
+ **Undo and redo are not fully functional in the current implementation.**
+
+### Challenges Encountered
+- HTML Canvas is **imperative and non-reversible**, requiring full history replay.
+- Maintaining correct stroke ordering under multi-user interleaving proved complex.
+- Handling concurrent undo/redo actions across users introduced consistency issues.
+- Ensuring deterministic replay across all clients without visual artifacts was non-trivial.
+
+### Lessons Learned
+- Undo/redo in collaborative systems must be designed as **state reconstruction**, not state mutation.
+- Stroke history ordering is more critical than per-user grouping.
+- A timeline-based or versioned state model may be more appropriate for future iterations.
+
+### Planned Improvements
+- Refactor stroke history into a time-ordered command log.
+- Introduce versioned snapshots for efficient replay.
+- Scope undo/redo per room rather than globally.
+- Add conflict resolution for simultaneous undo/redo actions.
+
+Undo/redo functionality is intentionally documented as incomplete to reflect real-world engineering constraints and learning outcomes.
 

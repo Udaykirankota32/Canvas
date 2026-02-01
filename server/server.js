@@ -12,6 +12,9 @@ const app = express();
 app.use(cors())
 
 let CanvaArray=[];
+let usersRedoStacks={};
+
+
 const  server   = createServer(app)
 
 const io =new Server(server,{
@@ -46,13 +49,13 @@ io.on("connection",(socket)=>{
 
     socket.on("canvas-data",(data)=>{
         CanvaArray.push(data);  //saving the Canvas data of each user in server memory
+
         socket.broadcast.emit("canvas-data",data);         //broadcasting the data to all other clients except the sender
 
     })
 
     socket.on("clear-canvas",()=>{
-        CanvaArray=[];           //clearing the server memory of canvas data
-
+        CanvaArray=[];          //clearing the server memory of canvas data
         socket.emit("clear-canvas");  //notifying all connected clients to clear their canvas
     })
 
@@ -139,8 +142,29 @@ io.on("connection",(socket)=>{
         room.to(roomId).emit("clear-canvas-in-room");  //notifying all connected clients to clear their canvas
     })
 
+    //undo Redo handling
 
+    socket.on("undo-canvas", (userId) => {
+        let userCanvasHistory = CanvaArray.filter(stroke => stroke.userId === userId);
+        let nonUserHistory = CanvaArray.filter(stroke => stroke.userId !== userId);
+        if (userCanvasHistory.length === 0) return;
 
+        const undoneStroke = userCanvasHistory.pop();
+        if (!usersRedoStacks[userId]) usersRedoStacks[userId] = [];
+        usersRedoStacks[userId].push(undoneStroke);
+
+        CanvaArray = [...nonUserHistory, ...userCanvasHistory];
+        io.emit("usercanvas-data", CanvaArray); // Broadcast updated canvas data
+    });
+
+    socket.on("redo-canvas", (userId) => {
+        if (!usersRedoStacks[userId] || usersRedoStacks[userId].length === 0) return;
+
+        const redoneStroke = usersRedoStacks[userId].pop();
+        CanvaArray.push(redoneStroke);
+
+        io.emit("usercanvas-data", CanvaArray); // Broadcast updated canvas data
+    });
     
 
     

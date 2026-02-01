@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { FaPaintBrush, FaEraser, FaArrowLeft } from "react-icons/fa";
+import { LiaUndoSolid,LiaRedoSolid  } from "react-icons/lia";
 import ReactModal from "react-modal";
 import {getSocket} from "./websocket.jsx";
 import "./ToolsBar.css";
@@ -52,7 +53,7 @@ const ToolsBar = (props) => {
 
   return (
     <div className="ToolsBarContainer">
-      <h1 className="mainTitle">Options</h1>
+      <h1 className="mainTitle">Canvas ToolKit</h1>
       <div
         className={
           activeToolState === "brush"
@@ -65,6 +66,7 @@ const ToolsBar = (props) => {
           className={
             activeToolState === "brush" ? "toolButton  active" : "toolButton "
           }
+          title="Brush Tool"
           onClick={() => {
             changeActiveTool("brush");
             changeActiveToolState("brush");
@@ -85,6 +87,7 @@ const ToolsBar = (props) => {
           className={
             activeToolState === "eraser" ? "toolButton  active" : "toolButton "
           }
+          title="Eraser Tool"
           onClick={() => {
             changeActiveTool("eraser");
             changeActiveToolState("eraser");
@@ -203,6 +206,28 @@ const ToolsBar = (props) => {
             </div>
           )}
         </ReactModal>
+      </div>
+      <div className="UndoRedoButtonBox">
+        <button
+          className="undoRedoBtns"
+          title="Undo"
+          onClick={() => {
+            const socket = getSocket();
+            socket.emit("undo-canvas", socket.id);
+          }}
+        >
+          <LiaUndoSolid size={30} />
+        </button>
+        <button
+          className="undoRedoBtns"
+          title="Redo"
+          onClick={() => {
+            const socket = getSocket();
+            socket.emit("redo-canvas", socket.id);
+          }}
+        >
+          <LiaRedoSolid size={30} />
+        </button>
       </div>
     </div>
   );

@@ -68,6 +68,11 @@ const Canvas = (props) => {
     socket.on("clear-canvas-in-room", handleClearCanvas);
     socket.on("usersCanvasHistory-in-room", handleCanvasHistory);
     socket.on("canvas-data-in-room", handleCanvasData);
+    socket.on("usercanvas-data", (updatedCanvasData) => {
+      handleClearCanvas();
+      handleCanvasHistory(updatedCanvasData);
+    });
+    
   
     socket.emit("request-for-history"); //requesting existing canvas data when a new user connects
     socket.emit("request-for-history-in-room",props.roomId); //requesting existing canvas data when a new user joins a room
@@ -104,6 +109,7 @@ const Canvas = (props) => {
       lastpos.current = { x: toX, y: toY };
 
       const userCanvasData = {
+        userId:socket.id,
         Tool: activeTool.current,
         color: activeColor.current,
         brushSize: brushSize.current,
