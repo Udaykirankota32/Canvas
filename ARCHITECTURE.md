@@ -203,38 +203,74 @@ Isolate canvas collaboration into secure, independent rooms.
 - Clients never trust local state for authorization.
 
 
-## Phase 6: Performance Optimization (Throttled Real-Time Drawing)
-# Goal
+## ## Phase 6: Performance Optimization (Throttled Real-Time Drawing)
 
-  Reduce network overhead and improve scalability during real-time collaborative drawing.
+### Status
+Planned (Not Implemented)
 
-# Problem
+### Goal
+Reduce network overhead and improve scalability during real-time collaborative drawing.
 
-- Continuous mouse movement generates a very high number of drawing events.
+### Problem
+Continuous mouse movement generates a very high number of drawing events.
 Emitting every mouse movement event leads to:
 - Excessive socket traffic
 - Increased server load
-- Reduced scalability with multiple users
-- 
-# Solution
+- Reduced scalability with multiple concurrent users
 
-- Socket emission is throttled while keeping local canvas rendering unthrottled.
-- Canvas rendering occurs on every mouse movement for smooth local feedback.
-- Socket events are emitted at controlled intervals.
-- Throttling is applied only to network communication, not rendering.
+### Proposed Solution
+Introduce throttling on client-side draw event emission.
 
-# Design Decisions
+- Local canvas rendering remains unthrottled for smooth user experience
+- Network emissions are throttled to a fixed interval
+- Only essential drawing segments are transmitted
 
-- Throttling logic is implemented on the client side.
-- Time-based throttling is used instead of event-based batching for simplicity.
-- Canvas remains an imperative rendering surface independent of React re-renders.
+### Design Considerations
+- Throttling is applied only to socket emissions, not canvas rendering
+- Throttle interval must balance smoothness and network efficiency
+- This optimization is critical for large rooms and high concurrency
 
-# Outcome
+### Rationale for Deferral
+This optimization was intentionally deferred to prioritize correctness,
+room-based isolation, and late-joiner consistency before performance tuning.
 
--  Significantly reduced number of socket emissions.
-- Smooth local drawing experience preserved.
- - Improved prformance under concurrent multi-user drawing.
- - Key Engineering Insight
- - In real-time systems, network communication should be optimized independently from rendering to maintain responsiveness and scalability.
 
  
+## Phase 7: User Management and Presence 
+
+### Implemented: User Management
+
+### Purpose
+Maintain awareness of connected users and associate identity metadata with real-time interactions.
+
+### Design
+- The server maintains a registry of currently connected users.
+- Each user is assigned:
+  - A unique identifier (socket ID)
+  - A unique visual color upon connection
+
+### Responsibilities
+- Server acts as the **source of truth** for user presence.
+- User presence updates are broadcast to all connected clients in real time.
+- Clients use user metadata for:
+  - Cursor indicators
+  - Online user lists
+  - Visual differentiation between collaborators
+
+### Key Decisions
+- User identity is server-assigned to prevent conflicts.
+- User data is ephemeral and exists only for the duration of the session.
+- No authentication or long-term user persistence is implemented at this stage.
+
+### Planned: User Indicators (Cursor Presence)
+
+User indicators will display real-time cursor positions of other active users.
+
+- Cursor positions will be transmitted as transient real-time events.
+- Indicator data will not be persisted or included in canvas history.
+- Cursor updates will be throttled to minimize network overhead.
+
+This feature is intentionally deferred to maintain system stability and focus on core collaboration functionality.
+
+
+

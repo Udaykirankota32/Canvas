@@ -2,6 +2,7 @@ import { useRef, useEffect, useState } from "react";
 import { initiateSocketConnection } from "./websocket.jsx";
 import Canvas from "./canvas.jsx";
 import ToolsBar from "./ToolsBar.jsx";
+import OnlineUsersDashboard  from "./OnlineUsersDashboard.jsx";
 import "./App.css";
 
 const App = () => {
@@ -53,6 +54,7 @@ const App = () => {
             brushSize={brushSize}
           />
         </div>
+         <OnlineUsersDashboard />
       </div>
     </div>
   );

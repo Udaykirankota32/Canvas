@@ -112,6 +112,9 @@ The application supports room-based collaboration.
 - Local canvas drawing is rendered on every mouse movement.
 - Socket emissions for drawing events are throttled to reduce network traffic.
 - This approach ensures smooth drawing while minimizing unnecessary socket messages.
+-but This optimization was intentionally deferred to prioritize correctness,
+room-based isolation, and late-joiner consistency before performance tuning.
+
 
 ## Benefits
 
@@ -132,7 +135,6 @@ The application supports room-based collaboration.
 - Mobile and touch input support is limited.
 - Canvas resolution is dependent on client viewport size and may differ across devices.
 
-
 ## Project Status
 
 - Transport layer: Completed
@@ -151,10 +153,7 @@ Broadcast it to all other sockets
 
 
 ## Project Status
-
-- facing errors while performing Throttling ,so i undo the changes for latest git commit
--projects users indicators and user online management are in progress
-- Projects redo /undo functions are in progress
+- Real-time multi-user collaboration (in progress)
 
 ## Setup Instructions
 ```bash

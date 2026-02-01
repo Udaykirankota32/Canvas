@@ -2,7 +2,8 @@ import express from "express";
 import { createServer } from "http";
 import { Server } from "socket.io";
 import cors from "cors";
-import { createRoom,joinRoom,existRoom,rooms } from "./rooms.js";
+import { createRoom,joinRoom,exitRoom,rooms } from "./room.js";
+import {getAllUsers,addUser,removeUser} from "./users.js"
 
 
 
@@ -23,6 +24,22 @@ const io =new Server(server,{
 io.on("connection",(socket)=>{
     console.log(`User connected: ${socket.id}`)
 
+    //---------user management---------//
+    const user=addUser(socket.id);
+    io.emit("users-update",getAllUsers());  
+
+    socket.on("disconnect",()=>{
+        console.log(`User disconnected: ${socket.id}`)
+        removeUser(socket.id);
+        io.emit("users-update",getAllUsers());  
+    })
+     
+
+    //---------canvas management---------//
+
+
+
+    
     socket.on("request-for-history",()=>{    //when a new user connects and requests for existing canvas data
         socket.emit("usersCanvasHistory",CanvaArray);  //sending the existing canvas data to the newly connected user
     });
@@ -90,7 +107,7 @@ io.on("connection",(socket)=>{
 
 
     socket.on("exit-Room",(roomId)=>{
-        if(existRoom(roomId)){
+        if(exitRoom(roomId)){
             socket.leave(roomId)
 
             socket.emit("Exit-Room-Status",{status:"success",message:"Exited Room Successfully"})
@@ -99,7 +116,9 @@ io.on("connection",(socket)=>{
             socket.emit("Exit-Room-Status",{status:"failure",message:"Room Not Found"})
         }
     })
+ 
 
+    //handling canvas data within rooms
 
     socket.on("canvas-data-in-room",({roomId,stroke})=>{
         const room =rooms.get(roomId);

@@ -2,7 +2,7 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: "Roboto";
+  font-family:sans-serif;
 }
 
 .Canvas-Editor-Container {
@@ -24,7 +24,7 @@
 }
 
 .Canvas-Container {
-  width: 80%;
+  width: 60%;
   height: 100%;
   background: white;
   border: 1px solid black;

@@ -59,6 +59,7 @@ const Canvas = (props) => {
       context.clearRect(0, 0, canvas.width, canvas.height);
     }
 
+    
 
   
     socket.on("clear-canvas", handleClearCanvas);
