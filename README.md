@@ -90,12 +90,35 @@ The application supports a global canvas clear operation.
 
 This ensures that destructive actions remain authoritative and consistent across clients.
 
+## Canvas Rooms
+
+The application supports room-based collaboration.
+
+### Features
+- Users can create or join a room using a Room ID and password.
+- Only users in the same room receive drawing events.
+- Canvas state is isolated per room.
+- Late joiners receive the existing canvas history of the room.
+
+### Security
+- Room authorization is handled on the server.
+- Clients cannot access rooms without valid credentials.
+- The server acts as the single source of truth for room membership.
+
+
 
 ## Limitations
 
-- Canvas state persists across refreshes as long as the server is running.
-- Long-term persistence (database-backed storage) is not implemented yet.
-- Undo/redo and room-based isolation are planned future improvements.
+- Canvas state is stored in server memory and persists only while the server is running.
+- Refreshing the page causes the client to reconnect and request canvas history from the server; no client-side persistence is implemented.
+- Long-term persistence using a database or file storage is not implemented.
+- High-frequency drawing events are not yet throttled or batched, which may affect      performance under heavy load.
+- Room data (canvas history, users, passwords) exists only in memory and is lost on server restart.
+- No role-based permissions (e.g., room owner, moderator) are implemented.
+- Undo/redo functionality is not implemented.
+- Mobile and touch input support is limited.
+- Canvas resolution is dependent on client viewport size and may differ across devices.
+
 
 ## Project Status
 

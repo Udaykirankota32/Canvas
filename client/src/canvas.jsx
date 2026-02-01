@@ -127,6 +127,9 @@ const Canvas = (props) => {
       socket.off("clear-canvas", handleClearCanvas);
       socket.off("usersCanvasHistory", handleCanvasHistory);
       socket.off("canvas-data", handleCanvasData);
+      socket.off("clear-canvas-in-room", handleClearCanvas);
+      socket.off("usersCanvasHistory-in-room", handleCanvasHistory);
+      socket.off("canvas-data-in-room", handleCanvasData);
       canvas.removeEventListener("mousedown", beginDrawing);
       canvas.removeEventListener("mousemove", draw);
       canvas.removeEventListener("mouseup", stopDrawing);
