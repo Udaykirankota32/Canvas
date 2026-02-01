@@ -126,7 +126,6 @@ The application supports room-based collaboration.
 - Canvas state is stored in server memory and persists only while the server is running.
 - Refreshing the page causes the client to reconnect and request canvas history from the server; no client-side persistence is implemented.
 - Long-term persistence using a database or file storage is not implemented.
-- High-frequency drawing events are not yet throttled or batched, which may affect      performance under heavy load.
 - Room data (canvas history, users, passwords) exists only in memory and is lost on server restart.
 - No role-based permissions (e.g., room owner, moderator) are implemented.
 - Undo/redo functionality is not implemented.
@@ -152,7 +151,9 @@ Broadcast it to all other sockets
 
 
 ## Project Status
-- Real-time multi-user collaboration (in progress)
+- Implemented throttling to reduce socket emissions and improve real-time canvas drawing performance.
+- Throttling socket emissions while keeping canvas rendering unthrottled. This reduced network load without impacting the drawing experience.
+- Projects redo /undo functions are in progress
 
 ## Setup Instructions
 ```bash
