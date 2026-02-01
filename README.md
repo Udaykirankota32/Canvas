@@ -119,7 +119,6 @@ The application supports room-based collaboration.
 - Mobile and touch input support is limited.
 - Canvas resolution is dependent on client viewport size and may differ across devices.
 
-
 ## Project Status
 
 - Transport layer: Completed
