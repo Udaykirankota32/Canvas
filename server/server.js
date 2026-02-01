@@ -56,9 +56,9 @@ io.on("connection",(socket)=>{
 
     })
 
-    socket.on("clear-canvas",()=>{
-        CanvaArray=[];          //clearing the server memory of canvas data
-        socket.emit("clear-canvas");  //notifying all connected clients to clear their canvas
+    socket.on("clear-canvas", () => {
+        CanvaArray = []; // clearing the server memory of canvas data
+        io.emit("clear-canvas"); // notifying all connected clients to clear their canvas
     })
 
 
