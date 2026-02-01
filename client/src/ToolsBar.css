@@ -76,11 +76,32 @@
   color: white;
 }
 
+.ExitButton {
+  background-color:transparent;
+  border:1px solid black;
+  border-radius: 10px;
+  color: black;
+} 
+
+
 .RoomButton {
   background-color:transparent;
   border-radius: 10px;
   color: black;
   border: 2px solid black;
+}
+
+.RoomIdDisplay{
+  align-self: center;
+  font-size: 18px;
+  font-weight: bold;
+  word-wrap: break-word;
+  margin: 10px 0px;
+  padding: 10px 20px;
+  border:1px solid black;
+  border-radius: 10px;
+  background-color: transparent;
+  color: indigo;
 }
 
 .ReactModal__Content {

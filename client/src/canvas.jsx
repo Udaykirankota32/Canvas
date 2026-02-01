@@ -39,6 +39,7 @@ const Canvas = (props) => {
       });
     };
 
+
     const handleCanvasData = (data) => {
       context.beginPath(); // start a new path for each received segment
       context.lineWidth = data.brushSize;
@@ -63,9 +64,13 @@ const Canvas = (props) => {
     socket.on("clear-canvas", handleClearCanvas);
     socket.on("usersCanvasHistory", handleCanvasHistory);
     socket.on("canvas-data", handleCanvasData);
+    socket.on("clear-canvas-in-room", handleClearCanvas);
+    socket.on("usersCanvasHistory-in-room", handleCanvasHistory);
+    socket.on("canvas-data-in-room", handleCanvasData);
   
     socket.emit("request-for-history"); //requesting existing canvas data when a new user connects
-
+    socket.emit("request-for-history-in-room",props.roomId); //requesting existing canvas data when a new user joins a room
+    
     const beginDrawing = (e) => {
       isDrawing.current = true;
       context.beginPath();

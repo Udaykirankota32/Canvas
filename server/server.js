@@ -2,6 +2,8 @@ import express from "express";
 import { createServer } from "http";
 import { Server } from "socket.io";
 import cors from "cors";
+import { createRoom,joinRoom,existRoom,rooms } from "./rooms.js";
+
 
 
 
@@ -34,8 +36,93 @@ io.on("connection",(socket)=>{
     socket.on("clear-canvas",()=>{
         CanvaArray=[];           //clearing the server memory of canvas data
 
-       socket.emit("clear-canvas");  //notifying all connected clients to clear their canvas
+        socket.emit("clear-canvas");  //notifying all connected clients to clear their canvas
     })
+
+
+    socket.on("Create-Room",(roomId,password)=>{ //creating a new room
+        createRoom (roomId,password)
+        socket.join(roomId)
+        console.log(`Room ${roomId} created by ${socket.id}`)
+    })
+
+    socket.on("Join-Room",(roomId,password)=>{  //joining an existing room      
+        const room=joinRoom(roomId)
+        if(room){
+            if(room.password===password){ 
+                room.users.add(socket.id)
+                socket.join(roomId)
+                socket.emit("usersCanvasHistory",room.canvasData); //sending existing canvas data of the room to the newly joined user
+                socket.emit("Join-Room-Status",{status:"success",message:"Joined Room Successfully"})
+            }
+            else{
+                socket.emit("Join-Room-Status",{status:"failure",message:"Incorrect Password"})
+            }           
+        }
+        else{
+            socket.emit("Join-Room-Status",{status:"failure",message:"Room Not Found"})
+        }
+    })
+    
+    socket.on("Create-Room",(roomId,password)=>{ //creating a new room
+        createRoom (roomId,password)
+        socket.join(roomId)
+        console.log(`Room ${roomId} created by ${socket.id}`)
+    })
+
+    socket.on("Join-Room",(roomId,password)=>{  //joining an existing room      
+        const room=joinRoom(roomId)
+        if(room){
+            if(room.password===password){ 
+                room.users.add(socket.id)
+                socket.join(roomId)
+                socket.emit("usersCanvasHistory",room.canvasData); //sending existing canvas data of the room to the newly joined user
+                socket.emit("Join-Room-Status",{status:"success",message:"Joined Room Successfully"})
+            }
+            else{
+                socket.emit("Join-Room-Status",{status:"failure",message:"Incorrect Password"})
+            }           
+        }
+        else{
+            socket.emit("Join-Room-Status",{status:"failure",message:"Room Not Found"})
+        }
+    })
+
+
+    socket.on("exit-Room",(roomId)=>{
+        if(existRoom(roomId)){
+            socket.leave(roomId)
+
+            socket.emit("Exit-Room-Status",{status:"success",message:"Exited Room Successfully"})
+        }
+        else{
+            socket.emit("Exit-Room-Status",{status:"failure",message:"Room Not Found"})
+        }
+    })
+
+
+    socket.on("canvas-data-in-room",({roomId,stroke})=>{
+        const room =rooms.get(roomId);
+        if(!room) return;
+        room.to(roomId).emit("canvas-data-in-room",stroke);
+    })
+
+    socket.on("request-for-history-in-room",(roomId)=>{    //when a new user connects and requests for existing canvas data
+        const room =rooms.get(roomId);
+        if(!room) return;
+        socket.emit("usersCanvasHistory-in-room",room.canvasData);  //sending the existing canvas data to the newly connected user
+    });
+
+    socket.on("clear-canvas-in-room",(roomId)=>{
+        const room =rooms.get(roomId);
+        if(!room) return;
+        room.canvasData=[];           //clearing the server memory of canvas data               
+        room.to(roomId).emit("clear-canvas-in-room");  //notifying all connected clients to clear their canvas
+    })
+
+
+
+    
 
     
 
