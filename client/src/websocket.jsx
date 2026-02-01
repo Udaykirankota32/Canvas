@@ -3,10 +3,11 @@ let socket = null;
 
 export const initiateSocketConnection = () => {
   if (!socket) {
-    socket = io("http://localhost:3000", {
-      transports: ["websocket", "polling"],
-      autoConnect: true,
-    });
+    socket = io(import.meta.env.VITE_SOCKET_URL, {
+  transports: ["websocket"],
+  autoConnect: true,
+});
+
   }
   return socket;
 };

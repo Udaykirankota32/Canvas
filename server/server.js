@@ -16,10 +16,12 @@ let usersRedoStacks={};
 
 
 const  server   = createServer(app)
+const PORT = process.env.PORT || 3000;
+
 
 const io =new Server(server,{
     cors:{
-        origin:"https://localhost:5173",
+        origin:"*",
         methods:["GET","POST"]
     }
 })
@@ -182,7 +184,9 @@ io.on("connection",(socket)=>{
 
 
 
-server.listen  (3000,()=>{
-    console.log("Server is running on port 3000")
-})
+
+server.listen(PORT, () => {
+  console.log("Server running on port", PORT);
+});
+
 
