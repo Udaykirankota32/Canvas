@@ -72,6 +72,25 @@ This ensures consistent canvas state for all users.
 - Canvas state persists across refreshes while server is running
 - Persistent canvas screen is maintained even after the refresh 
 
+## Current Features
+
+- Single-user canvas drawing
+- Multi-user real-time drawing synchronization
+- Late joiner canvas state recovery
+- Global canvas clear (synchronized across all users)
+
+## Global Canvas Clear
+
+The application supports a global canvas clear operation.
+
+- When a user clicks the **Clear** button, a `clear-canvas` event is emitted.
+- The server broadcasts this event to all connected clients.
+- Each client imperatively clears its own canvas upon receiving the event.
+- Canvas clearing is handled via server synchronization to maintain consistency.
+
+This ensures that destructive actions remain authoritative and consistent across clients.
+
+
 ## Limitations
 
 - Canvas state persists across refreshes as long as the server is running.

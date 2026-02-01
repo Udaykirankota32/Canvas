@@ -125,6 +125,7 @@ The server:
 Late joiners explicitly request canvas history after initializing socket listeners to avoid race conditions.
 
 
+
 ## Key Engineering Decisions
 
 - Socket.IO was chosen over raw WebSockets for reliability, reconnection handling, and simpler event-based communication.
@@ -143,3 +144,35 @@ Late joiners explicitly request canvas history after initializing socket listene
 ### Mistake: Assuming canvas reacts to value changes
 - Cause: Treated canvas like a declarative UI.
 - Fix: Applied drawing styles imperatively at stroke start.
+
+
+## Phase 4: Global Destructive Actions Synchronization
+
+### Goal
+Ensure destructive canvas actions (such as clearing the canvas) are consistently applied across all connected clients.
+
+### Design
+- Destructive actions are treated as first-class real-time events.
+- Clients do not perform local-only canvas mutations for shared actions.
+- All clear operations are synchronized through the server.
+
+### Flow
+1. Client emits a `clear-canvas` event.
+2. Server receives the event.
+3. Server broadcasts `clear-canvas` to all connected clients.
+4. Clients imperatively clear their canvas upon receiving the event.
+
+### Key Decisions
+- Canvas clearing is server-authoritative.
+- Clients react to events instead of mutating canvas optimistically.
+- Avoids inconsistent canvas state across users.
+
+### Engineering Insight
+Emit-only actions are insufficient in real-time systems.  
+Each emitted event must have a corresponding listener to produce visible behavior.
+
+### Mistake: Global clear only affected local canvas
+
+- Cause: The client emitted a `clear-canvas` event but no other clients were listening for it.
+- Fix: Implemented client-side listeners for `clear-canvas` and server-side broadcasting.
+- Learning: Emitting an event has no effect unless all intended recipients have active listeners.
