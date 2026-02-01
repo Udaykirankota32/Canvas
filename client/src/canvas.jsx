@@ -1,5 +1,5 @@
 import { useRef, useEffect } from "react";
-import {getSocket} from "./websocket.jsx";
+import { getSocket } from "./websocket.jsx";
 import "./canvas.css";
 
 const Canvas = (props) => {
@@ -10,7 +10,7 @@ const Canvas = (props) => {
   const lastpos = useRef({ x: 0, y: 0 });
 
   useEffect(() => {
-    if(!socket) return;
+    if (!socket) return;
     const canvas = canvasRef.current;
     const context = canvas.getContext("2d");
     const rect = canvas.getBoundingClientRect();
@@ -19,10 +19,11 @@ const Canvas = (props) => {
     context.lineCap = "round";
     context.lineJoin = "round";
 
-    canvas.globalCompositeOperation = "source-over";//default drawing mode
+    canvas.globalCompositeOperation = "source-over"; //default drawing mode
 
-    const handleCanvasHistory=(historyData)=>{ //handling existing canvas data for newly connected users
-      historyData.forEach((data)=>{
+    const handleCanvasHistory = (historyData) => {
+      //handling existing canvas data for newly connected users
+      historyData.forEach((data) => {
         context.beginPath(); // start a new path for each segment
         context.lineWidth = data.brushSize;
         if (data.Tool === "eraser") {
@@ -35,8 +36,8 @@ const Canvas = (props) => {
         context.lineTo(data.toX, data.toY);
         context.stroke();
         context.closePath();
-      })
-    }
+      });
+    };
 
     const handleCanvasData = (data) => {
       context.beginPath(); // start a new path for each received segment
@@ -52,7 +53,6 @@ const Canvas = (props) => {
       context.stroke();
       context.closePath();
     };
-
 
     socket.on("usersCanvasHistory", handleCanvasHistory);
     socket.on("canvas-data", handleCanvasData);

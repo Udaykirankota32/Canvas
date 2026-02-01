@@ -1,5 +1,5 @@
-import { useRef, useEffect ,useState} from "react";
-import {initiateSocketConnection} from "./websocket.jsx";
+import { useRef, useEffect, useState } from "react";
+import { initiateSocketConnection } from "./websocket.jsx";
 import Canvas from "./canvas.jsx";
 import ToolsBar from "./ToolsBar.jsx";
 import "./App.css";
@@ -9,7 +9,6 @@ const App = () => {
   const activeTool = useRef("brush");
   const activeColor = useRef("#000000");
   const brushSize = useRef(5);
-
 
   useEffect(() => {
     const connectSocket = async () => {
@@ -21,16 +20,13 @@ const App = () => {
     connectSocket();
   }, []);
 
-  if  (!socketConnected) return <div>Connecting to the server...</div>;
-  
-
+  if (!socketConnected) return <div>Connecting to the server...</div>;
 
   const changeActiveTool = (tool) => {
     activeTool.current = tool;
   };
 
   const changeActiveColor = (color) => {
-    //applied to only access the color when brush is active
     if (activeTool.current === "brush") {
       activeColor.current = color;
     }
@@ -45,6 +41,8 @@ const App = () => {
       <div className="Canvas-Editor-BoxContainer">
         <ToolsBar
           activeTool={activeTool}
+          activeColor={activeColor}
+          brushSize={brushSize}
           changeActiveTool={changeActiveTool}
           changeActiveColor={changeActiveColor}
           changeBrushSize={changeBrushSize}

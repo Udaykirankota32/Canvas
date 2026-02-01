@@ -1,24 +1,59 @@
 import { useState } from "react";
-import { FaPaintBrush, FaEraser } from "react-icons/fa";
+import { FaPaintBrush, FaEraser, FaArrowLeft } from "react-icons/fa";
+import ReactModal from "react-modal";
 import "./ToolsBar.css";
 
 const ToolsBar = (props) => {
-  const { changeActiveTool, changeActiveColor, changeBrushSize } = props;
+  const { changeActiveTool, changeActiveColor, changeBrushSize, setRoomMode } = props;
   const [activeToolState, changeActiveToolState] = useState("brush");
+  const [modalIsOpen, setModalIsOpen] = useState(false);
+  const [roomMode, setRoomModeState] = useState(null); // "create" or "join"
+  const [roomId, setRoomId] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [currentRoomId, setCurrentRoomId] = useState(null);
 
-  const changeToBrush = () => {
-    changeActiveTool("brush");
-    changeActiveToolState("brush");
+  const closeModal = () => {
+    setModalIsOpen(false);
+    setRoomModeState(null);
+    setRoomId("");
+    setPassword("");
+    setConfirmPassword("");
   };
 
-  const changeToEraser = () => {
-    changeActiveTool("eraser");
-    changeActiveToolState("eraser");
+  const handleCreateRoom = () => {
+    const generatedRoomId = Math.random().toString(36).substring(2, 8).toUpperCase();
+    setRoomId(generatedRoomId);
+    setRoomModeState("create");
+  };
+
+  const handleJoinRoom = () => {
+    setRoomModeState("join");
+  };
+
+  const confirmCreateRoom = () => {
+    if (password === confirmPassword) {
+      setCurrentRoomId(roomId);
+      setRoomMode(true);
+      closeModal();
+    } else {
+      alert("Passwords do not match!");
+    }
+  };
+
+  const confirmJoinRoom = () => {
+    if (roomId && password) {
+      setCurrentRoomId(roomId);
+      setRoomMode(true);
+      closeModal();
+    } else {
+      alert("Please enter Room ID and Password!");
+    }
   };
 
   return (
     <div className="ToolsBarContainer">
-      <h1>Options</h1>
+      <h1 className="mainTitle">Options</h1>
       <div
         className={
           activeToolState === "brush"
@@ -31,7 +66,10 @@ const ToolsBar = (props) => {
           className={
             activeToolState === "brush" ? "toolButton  active" : "toolButton "
           }
-          onClick={changeToBrush}
+          onClick={() => {
+            changeActiveTool("brush");
+            changeActiveToolState("brush");
+          }}
         >
           Brush
         </button>
@@ -48,7 +86,10 @@ const ToolsBar = (props) => {
           className={
             activeToolState === "eraser" ? "toolButton  active" : "toolButton "
           }
-          onClick={changeToEraser}
+          onClick={() => {
+            changeActiveTool("eraser");
+            changeActiveToolState("eraser");
+          }}
         >
           Eraser
         </button>
@@ -60,8 +101,7 @@ const ToolsBar = (props) => {
         onChange={(e) => {
           changeActiveColor(e.target.value);
         }}
-      />{" "}
-      {/* disabled color picker when eraser is on */}
+      />
       <input
         type="range"
         min="1"
@@ -73,9 +113,8 @@ const ToolsBar = (props) => {
       />
       <div className="BottomButtonsBox">
         <button
-          className="ClearButton"
+          className="bottomBtns ClearButton"
           onClick={() => {
-            /* added Clear the canvas */
             const canvas = document.querySelector("canvas");
             const context = canvas.getContext("2d");
             context.clearRect(0, 0, canvas.width, canvas.height);
@@ -83,6 +122,90 @@ const ToolsBar = (props) => {
         >
           Clear
         </button>
+        {currentRoomId ? (
+          <>
+            <button
+              className="bottomBtns ExitButton"
+              onClick={() => {
+                setCurrentRoomId(null);
+                setRoomMode(false);
+              }}
+            >
+              Exit Room
+            </button>
+            <div className="RoomIdDisplay">Room ID: {currentRoomId}</div>
+          </>
+        ) : (
+          <button
+            className="bottomBtns RoomButton"
+            onClick={() => {
+              setModalIsOpen(true);
+            }}
+          >
+            Canvas Room
+          </button>
+        )}
+
+        <ReactModal
+          isOpen={modalIsOpen}
+          onRequestClose={closeModal}
+          className="ReactModal__Content"
+          overlayClassName="ReactModal__Overlay"
+          contentLabel="Room Modal"
+        >
+          <button className="modalCloseButton" onClick={closeModal}>X</button>
+          {roomMode && (
+            <button className="modalBackButton" onClick={() => setRoomModeState(null)}>
+              <FaArrowLeft /> Back
+            </button>
+          )}
+          {roomMode === "create" ? (
+            <div className="ContentAlignment">
+              <h2>Create Room</h2>
+              <p>Room ID: {roomId}</p>
+              <input
+                className="modalInput"
+                type="password"
+                placeholder="Set Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+              <input
+              className="modalInput"
+                type="password"
+                placeholder="Confirm Password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+              />
+              <button className="modalButton" onClick={confirmCreateRoom}>Create</button>
+            </div>
+          ) : roomMode === "join" ? (
+            <div className="ContentAlignment">
+              <h2>Join Room</h2>
+              <input
+                className="modalInput"
+                type="text"
+                placeholder="Room ID"
+                value={roomId}
+                onChange={(e) => setRoomId(e.target.value)}
+              />
+              <input
+              className="modalInput"
+                type="password"
+                placeholder="Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+              <button className="modalButton" onClick={confirmJoinRoom}>Join</button>
+            </div>
+          ) : (
+            <div className="ContentAlignment">
+              <button className="modalButton" onClick={handleCreateRoom}>Create Room</button>
+              <div>OR</div>
+              <button className="modalButton" onClick={handleJoinRoom}>Join Room</button>
+            </div>
+          )}
+        </ReactModal>
       </div>
     </div>
   );
