@@ -8,9 +8,7 @@ const Canvas = (props) => {
   const canvasRef = useRef(null);
   const isDrawing = useRef(false);
   const lastpos = useRef({ x: 0, y: 0 });
-  const lastEmitTime = useRef(0);
-  const emitInterval=30;//milliseconds
-
+  
   useEffect(() => {
     if (!socket) return;
     const canvas = canvasRef.current;
@@ -117,10 +115,6 @@ const Canvas = (props) => {
       context.lineTo(e.offsetX, e.offsetY);
 
       context.stroke();
-       if(Date.now()-lastEmitTime.current< emitInterval){
-        return;
-      }
-      lastEmitTime.current=Date.now();
       socket.emit("canvas-data", userCanvasData);
     };
 

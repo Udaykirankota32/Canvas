@@ -151,8 +151,9 @@ Broadcast it to all other sockets
 
 
 ## Project Status
-- Implemented throttling to reduce socket emissions and improve real-time canvas drawing performance.
-- Throttling socket emissions while keeping canvas rendering unthrottled. This reduced network load without impacting the drawing experience.
+
+- facing errors while performing Throttling ,so i undo the changes for latest git commit
+-projects users indicators and user online management are in progress
 - Projects redo /undo functions are in progress
 
 ## Setup Instructions
