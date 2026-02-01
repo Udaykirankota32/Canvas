@@ -105,6 +105,20 @@ The application supports room-based collaboration.
 - Clients cannot access rooms without valid credentials.
 - The server acts as the single source of truth for room membership.
 
+### Performance Optimizations
+
+- To improve real-time performance and scalability, the application includes the following optimization:
+- Throttled Drawing Events
+- Local canvas drawing is rendered on every mouse movement.
+- Socket emissions for drawing events are throttled to reduce network traffic.
+- This approach ensures smooth drawing while minimizing unnecessary socket messages.
+
+## Benefits
+
+-Lower network overhead
+-Reduced server load
+-Better scalability for multiple simultaneous users
+
 
 
 ## Limitations

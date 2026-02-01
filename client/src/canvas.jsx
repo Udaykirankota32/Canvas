@@ -8,6 +8,8 @@ const Canvas = (props) => {
   const canvasRef = useRef(null);
   const isDrawing = useRef(false);
   const lastpos = useRef({ x: 0, y: 0 });
+  const lastEmitTime = useRef(0);
+  const emitInterval=30;//milliseconds
 
   useEffect(() => {
     if (!socket) return;
@@ -73,8 +75,11 @@ const Canvas = (props) => {
     
     const beginDrawing = (e) => {
       isDrawing.current = true;
+
       context.beginPath();
       context.moveTo(e.offsetX, e.offsetY);
+
+    
       lastpos.current = { x: e.offsetX, y: e.offsetY };
 
       context.lineWidth = brushSize.current;
@@ -85,6 +90,8 @@ const Canvas = (props) => {
         context.globalCompositeOperation = "source-over";
         context.strokeStyle = activeColor.current;
       }
+
+       
     };
 
     const draw = (e) => {
@@ -110,6 +117,10 @@ const Canvas = (props) => {
       context.lineTo(e.offsetX, e.offsetY);
 
       context.stroke();
+       if(Date.now()-lastEmitTime.current< emitInterval){
+        return;
+      }
+      lastEmitTime.current=Date.now();
       socket.emit("canvas-data", userCanvasData);
     };
 

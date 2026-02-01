@@ -176,3 +176,65 @@ Each emitted event must have a corresponding listener to produce visible behavio
 - Cause: The client emitted a `clear-canvas` event but no other clients were listening for it.
 - Fix: Implemented client-side listeners for `clear-canvas` and server-side broadcasting.
 - Learning: Emitting an event has no effect unless all intended recipients have active listeners.
+
+
+## Phase 5: Room-Based Collaboration
+
+### Goal
+Isolate canvas collaboration into secure, independent rooms.
+
+### Design
+- Rooms are server-authoritative entities.
+- Each room maintains its own:
+  - Authorized users
+  - Canvas history
+- Socket.IO rooms are used for efficient event routing.
+
+### Flow
+1. Client requests to create or join a room.
+2. Server validates credentials.
+3. Socket joins the corresponding Socket.IO room.
+4. Drawing and clear events are scoped to the room.
+5. Late joiners request and replay room canvas history.
+
+### Key Decisions
+- Room access is validated exclusively on the server.
+- Canvas history is stored per room.
+- Clients never trust local state for authorization.
+
+
+## Phase 6: Performance Optimization (Throttled Real-Time Drawing)
+# Goal
+
+  Reduce network overhead and improve scalability during real-time collaborative drawing.
+
+# Problem
+
+- Continuous mouse movement generates a very high number of drawing events.
+Emitting every mouse movement event leads to:
+- Excessive socket traffic
+- Increased server load
+- Reduced scalability with multiple users
+- 
+# Solution
+
+- Socket emission is throttled while keeping local canvas rendering unthrottled.
+- Canvas rendering occurs on every mouse movement for smooth local feedback.
+- Socket events are emitted at controlled intervals.
+- Throttling is applied only to network communication, not rendering.
+
+# Design Decisions
+
+- Throttling logic is implemented on the client side.
+- Time-based throttling is used instead of event-based batching for simplicity.
+- Canvas remains an imperative rendering surface independent of React re-renders.
+
+# Outcome
+
+-  Significantly reduced number of socket emissions.
+- Smooth local drawing experience preserved.
+ - Improved prformance under concurrent multi-user drawing.
+ - Key Engineering Insight
+ - In real-time systems, network communication should be optimized independently from rendering to maintain responsiveness and scalability.
+
+ 
