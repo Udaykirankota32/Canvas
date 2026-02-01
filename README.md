@@ -1,27 +1,22 @@
 # Collaborative Canvas Application
 
-A real-time collaborative whiteboard application built using **React**, **HTML Canvas**, **Node.js**, and **Socket.IO**.  
-Multiple users can draw simultaneously on a shared canvas with real-time synchronization.
+A real-time collaborative whiteboard application built using **React**, **HTML5 Canvas**, **Node.js**, and **Socket.IO**.
 
-This project focuses on understanding **real-time systems**, **imperative canvas rendering**, and **multi-user synchronization challenges**.
+This project focuses on understanding **imperative canvas rendering**, **real-time multi-user synchronization**, and **system design challenges** involved in collaborative applications.
 
 ---
 
 ## Features
 
-### Core Canvas Features
 - Freehand drawing on canvas
 - Brush tool with adjustable color and size
-- True eraser implemented using canvas pixel compositing
-- Clear canvas functionality
+- Eraser tool (true eraser using pixel compositing)
+- Clear canvas functionality (synchronized)
 - Responsive canvas sizing
-- Canvas optimized to avoid unnecessary React re-renders
-
-### Real-Time Collaboration
-- Multi-user real-time drawing synchronization
+- Multi-user real-time drawing
 - Late joiner canvas state recovery
-- Global canvas clear synchronized across all users
-- Room-based collaboration with room ID and password
+- Room-based collaboration (Room ID + password)
+- Canvas optimized to avoid unnecessary React re-renders
 
 ---
 
@@ -41,142 +36,185 @@ This project focuses on understanding **real-time systems**, **imperative canvas
 
 ---
 
-## Key Learnings
+## Installation & Running the Project
 
-- Managing canvas rendering using `useRef`
-- Handling mouse events (`mousedown`, `mousemove`, `mouseup`)
-- Fixing canvas scaling issues using `getBoundingClientRect`
-- Applying brush styles at stroke start instead of during render
-- Integrating imperative Canvas APIs within a React application
-- Designing real-time synchronization using event-based communication
+### Prerequisites
+- Node.js (v18+ recommended)
+- npm
 
 ---
 
-## Technical Notes
+### Backend (Server)
 
-- Canvas drawing is handled imperatively using the Canvas 2D API
-- Toolbar controls update drawing behavior without triggering React re-renders
-- Eraser uses `globalCompositeOperation = "destination-out"`
-- Server acts as the authoritative source of truth
+ bash
+cd server
+npm install
+npm start
 
----
 
-## Real-Time Drawing Synchronization
 
-This project uses **Socket.IO** to enable real-time collaboration.
 
-### Synchronization Flow
-1. User draws on the canvas
-2. Client captures stroke data (tool, color, brush size, coordinates)
-3. Stroke data is emitted to the server
-4. Server broadcasts the stroke to other connected users
-5. Remote clients render the stroke locally
+## Tech Stack
 
-Drawing actions are transmitted as lightweight **stroke commands**, not canvas state.
+- React
+- JavaScript (ES6+)
+- HTML5 Canvas
+- CSS
 
----
+## Testing the App with Multiple Users
+
+- You can test real-time collaboration using multiple browser sessions.
+-Steps
+- Start both server and client
+- Open the app in one browser window
+- Open the same URL in:
+- another browser, or
+- an incognito window, or
+- a different device on the same network
+
+# Draw on the canvas in one window
+
+Verify that:
+- drawings appear in real time on other windows
+- clearing the canvas syncs across users
+- late joiners see existing drawings
+
+## Room Testing
+
+- Create a room using a Room ID and password
+
+- Join the same room from another browser
+
+- Confirm that drawings are isolated per room
+
+- Late joiners receive the existing room canvas state
+
+## Real-Time Collaboration Overview
+
+- Each client establishes a persistent Socket.IO connection
+
+- Drawing actions are emitted as stroke commands
+
+- The server broadcasts drawing data to other users
+
+- Clients replay received strokes locally
+
+- Canvas rendering is handled imperatively using the Canvas 2D API
 
 ## Late Joiner Synchronization
 
-When a new user joins an ongoing session, they receive the existing canvas content instead of a blank screen.
+- To prevent new users from seeing a blank canvas:
 
-This is implemented by:
-- Storing stroke commands on the server
-- Explicit client-side requests for canvas history
-- Replaying stored commands on the canvas after connection
+- The server stores drawing commands as canvas history
 
-This avoids race conditions where events are emitted before listeners attach.
+- New users explicitly request canvas history after connecting
 
----
+- The client replays stored commands to reconstruct the canvas
 
-## Canvas Persistence
-
-- Canvas state persists across page refreshes **while the server is running**
-- On refresh, clients reconnect and request the current canvas history
-- No client-side persistence is implemented
-
----
+- This avoids race conditions where events are emitted before listeners attach
 
 ## Global Canvas Clear
 
-- Clicking **Clear** emits a `clear-canvas` event
-- Server broadcasts the event to all connected clients
+- Clicking Clear emits a clear-canvas event
+
+- The server broadcasts the event to all connected clients
+
 - Each client clears its own canvas imperatively
-- Ensures destructive actions remain synchronized and consistent
 
----
+- Ensures destructive actions stay consistent across users
 
-## Canvas Rooms
+## Key Learnings
 
-### Features
-- Users can create or join rooms using a Room ID and password
-- Drawing events are isolated per room
-- Late joiners receive room-specific canvas history
+- Using useRef to manage canvas context and mutable values
 
-### Security Model
-- Room validation is handled on the server
-- Server maintains room membership and canvas state
-- Clients cannot access rooms without valid credentials
+- Handling mouse events (mousedown, mousemove, mouseup)
 
----
+- Fixing canvas scaling issues with getBoundingClientRect
 
-## Performance Considerations
+- Applying brush color and width at stroke start
 
-- Continuous mouse movement generates high-frequency events
-- Local drawing occurs on every mouse movement
-- Socket emissions are throttled to reduce network traffic
-- This improves scalability while maintaining smooth drawing
+- Treating canvas as an imperative, non-reactive surface
 
-> Performance optimizations were intentionally deferred until correctness, room isolation, and late joiner consistency were achieved.
+- Avoiding React re-renders during drawing for performance
 
----
+- Designing real-time systems with explicit synchronization
 
-## Undo / Redo Status (Incomplete)
+## Technical Notes
 
-Undo and redo were **designed and partially implemented** using a **stroke history replay model**, but are **not fully functional** in the current version.
+- Canvas drawing logic is handled imperatively using the Canvas 2D API
+- Toolbar controls update drawing behavior without triggering canvas re-renders
+- Eraser is implemented using `globalCompositeOperation = "destination-out"`
 
-### Intended Design
-- Each stroke is stored as an immutable command on the server
-- Undo removes the latest stroke created by a specific user
-- Redo restores the removed stroke from a per-user redo stack
-- Canvas is cleared and fully replayed after each action
+## Undo / Redo Status
 
-### Challenges
-- Canvas is non-reversible and requires full replay
-- Maintaining correct stroke order with multiple users is complex
-- Concurrent undo/redo requires a more advanced timeline-based model
+- Undo and redo were designed and partially implemented using a stroke history replay model, but are not fully functional in the current version.
 
-Undo/redo is documented as incomplete to avoid unstable behavior.
+- Intended Design
 
----
+- Each stroke stored as an immutable command
 
-## Limitations
+- Undo removes the most recent stroke by a user
+
+- Redo restores the removed stroke from a per-user stack
+
+- Canvas is cleared and fully replayed after undo/redo
+
+- Current Limitations
+
+- Correct ordering under multi-user interleaving is complex
+
+- Concurrent undo/redo requires timeline-based modeling
+
+- Feature is documented but intentionally left incomplete
+
+## Known Issues & Limitations
 
 - Canvas data is stored in server memory only
-- Data is lost on server restart
+
+- All data is lost on server restart
+
 - No database-backed persistence
-- Undo/redo incomplete
-- Cursor indicators not implemented
-- Limited mobile and touch support
+
+-- Undo/redo is incomplete
+
+- Cursor/pointer indicators are planned but not implemented
+
+- Limited mobile and touch input support
+
 - Canvas resolution depends on client viewport size
 
----
+## Total Time Spent on the Project
+
+- Approximate total time: 45–53 hours
+
+# Breakdown
+- Canvas fundamentals & React integration: ~10 hours
+- Real-time synchronization (Socket.IO): ~12 hours
+- Late joiner handling & state replay: ~8 hours
+- Room-based collaboration: ~7 hours
+- Debugging, refactoring & documentation: ~10 hours
+
+Time includes learning, experimentation, debugging race conditions, and architectural design decisions.
 
 ## Future Improvements
 
-- Database-backed persistence
+- Persistent storage using a database
+
 - Cursor and pointer indicators
-- Robust undo/redo using snapshots or timelines
-- Performance optimizations for large canvases
+
+- Robust undo/redo with timeline or snapshots
+
+- Performance tuning for large canvases
+
 - Authentication and access control
+
 - Mobile and touch support
 
----
+## Setup Instructions
 
-## Running the Project
-
-### Server
 ```bash
-cd server
+git clone https://github.com/Udaykirankota32/Canvas.git
+cd Canvas
 npm install
-node server.js
+npm start
+```

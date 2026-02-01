@@ -1,29 +1,111 @@
 # Architecture Overview
 
-This document describes the evolving architecture of the Collaborative Canvas System.  
-The architecture is documented incrementally as new system capabilities are introduced.
+This document describes the architecture of the **Collaborative Canvas Application**.
+The system is documented incrementally, reflecting how features were designed, implemented,
+and refined during development.
 
-The application follows a client–server real-time architecture.
+The application follows a **client–server real-time architecture**.
 
-- The client is responsible for rendering the canvas and capturing user input.
-- The server acts as the source of truth for synchronization.
-- Socket.IO is used for real-time bidirectional communication.
+- The **client** is responsible for rendering the canvas and capturing user input.
+- The **server** acts as the synchronization authority.
+- **Socket.IO** enables bidirectional real-time communication.
+
+---
+
+## High-Level Architecture
+
+- Clients render canvas locally using the HTML Canvas API
+- Clients emit drawing commands to the server
+- The server relays commands to other connected clients
+- Clients replay received commands imperatively
+
+The system uses **command-based synchronization**, not shared state replication.
+
+---
+
+## Data Flow Diagram (Conceptual)
+
+### Drawing Data Flow
+
+1. User draws on the canvas (mouse movement)
+2. Client captures a stroke segment:
+   - tool
+   - color
+   - brush size
+   - start coordinates
+   - end coordinates
+3. Client emits the stroke event to the server
+4. Server receives the stroke and:
+   - stores it in memory
+   - broadcasts it to other users
+5. Other clients receive the stroke
+6. Each client renders the stroke locally on its own canvas
+
+> The canvas itself never syncs state — only **drawing commands** are synchronized.
+
+---
+
+## WebSocket Communication Model
+
+### Protocol Choice
+- Socket.IO is used instead of raw WebSockets for:
+  - automatic reconnection
+  - event-based messaging
+  - transport fallback (polling → WebSocket)
+  - simpler client/server lifecycle management
+
+---
+
+### Message Formats
+
+#### Drawing Command
+json
+{
+  "userId": "socket-id",
+  "tool": "brush | eraser",
+  "color": "#000000",
+  "brushSize": 5,
+  "fromx": 120,
+  "fromy": 200,
+  "toX": 140,
+  "toY": 210
+}
 
 
+---
+## Events Sent and Received
+Client → Server
 
-## High-Level System Architecture
+canvas-data
 
-### Components
-- Client: React application (Canvas UI + Tooling)
-- Server: Node.js + Express
-- Transport Layer: Socket.IO
+clear-canvas
 
-### Responsibilities
-- Clients capture drawing intent and render strokes locally.
-- Server coordinates real-time data flow between clients.
-- Canvas rendering is handled independently on each client.
+request-for-history
 
+Create-Room
 
+Join-Room
+
+exit-Room
+
+undo-canvas
+
+redo-canvas
+
+Server → Client
+
+canvas-data
+
+usersCanvasHistory
+
+clear-canvas
+
+users-update
+
+Join-Room-Status
+
+Exit-Room-Status
+------------------------------------------------------------------
 
 ## Phase 1: Transport Layer (Real-Time Foundation)
 
@@ -40,7 +122,7 @@ Establish a persistent real-time communication channel between multiple users.
 - Event-based, bi-directional communication using Socket.IO  
 - Lifecycle: connect → active session → disconnect
 
-
+--------------------------------------------------------------------------------
 
 ## Phase 2: Drawing Event Synchronization
 
@@ -89,6 +171,7 @@ The HTML Canvas is treated as an imperative and stateless rendering surface.
 - React state is not used for canvas rendering to avoid unnecessary re-renders.
 - Mutable values are managed using refs.
 
+-------------------------------------------------------------------------------------
 
 
 ## Phase 3: Late Joiner Synchronization
@@ -145,6 +228,7 @@ Late joiners explicitly request canvas history after initializing socket listene
 - Cause: Treated canvas like a declarative UI.
 - Fix: Applied drawing styles imperatively at stroke start.
 
+-------------------------------------------------------------------------------------------------
 
 ## Phase 4: Global Destructive Actions Synchronization
 
@@ -177,6 +261,7 @@ Each emitted event must have a corresponding listener to produce visible behavio
 - Fix: Implemented client-side listeners for `clear-canvas` and server-side broadcasting.
 - Learning: Emitting an event has no effect unless all intended recipients have active listeners.
 
+-----------------------------------------------------------------------------------------------
 
 ## Phase 5: Room-Based Collaboration
 
@@ -202,6 +287,8 @@ Isolate canvas collaboration into secure, independent rooms.
 - Canvas history is stored per room.
 - Clients never trust local state for authorization.
 
+
+--------------------------------------------------------------------------------------------
 
 ## ## Phase 6: Performance Optimization (Throttled Real-Time Drawing)
 
@@ -235,6 +322,8 @@ This optimization was intentionally deferred to prioritize correctness,
 room-based isolation, and late-joiner consistency before performance tuning.
 
 
+
+-----------------------------------------------------------------------------------------------
  
 ## Phase 7: User Management and Presence 
 
@@ -272,6 +361,8 @@ User indicators will display real-time cursor positions of other active users.
 
 This feature is intentionally deferred to maintain system stability and focus on core collaboration functionality.
 
+
+------------------------------------------------------------------------------------------
 
 ##  Phase-8  Undo / Redo Architecture (Attempted – Incomplete)
 
@@ -328,4 +419,37 @@ Undo and redo were designed using a **command history replay model**, based on t
 - Add conflict resolution for simultaneous undo/redo actions.
 
 Undo/redo functionality is intentionally documented as incomplete to reflect real-world engineering constraints and learning outcomes.
+
+--------------------------------------------------------------------------------------
+## Key Architectural Principles
+
+- Canvas is an imperative, non-reactive surface
+
+- React manages UI, not drawing state
+
+- Server is the single source of truth
+
+- Clients are stateless renderers
+
+- Synchronization is event-driven
+
+- Late joiners explicitly request history
+
+- Reliability is prioritized over optimization
+
+
+--------------------------------------------------------------------------------
+
+| Feature                | Status          |
+| ---------------------- | --------------- |
+| Real-time drawing      | Implemented     |
+| Late joiner recovery   | Implemented     |
+| Room isolation         | Implemented     |
+| Global clear           | Implemented     |
+| Undo / redo            | Partial / WIP   |
+| Performance throttling | Planned         |
+| Cursor indicators      | Planned         |
+| Persistent storage     | Not implemented |
+
+-----------------------------------------------------------------------------
 
