@@ -2,7 +2,8 @@ import  {useEffect,useState} from "react";
 import {getSocket} from"./websocket.jsx";
 import { IoLogoOctocat } from "react-icons/io5";
 
-import "./onlineUsersDashboard.css";
+import "./OnlineUsersDashboard.css";
+
 
 const OnlineUsersDashboard=()=>{
     const [userList,setUserList]=useState([]);
