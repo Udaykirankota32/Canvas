@@ -17,6 +17,7 @@ const App = () => {
         setSocketConnected(true);
       }
     };
+
     connectSocket();
   }, []);
 
@@ -40,9 +41,7 @@ const App = () => {
     <div className="Canvas-Editor-Container">
       <div className="Canvas-Editor-BoxContainer">
         <ToolsBar
-          activeTool={activeTool}
-          activeColor={activeColor}
-          brushSize={brushSize}
+          
           changeActiveTool={changeActiveTool}
           changeActiveColor={changeActiveColor}
           changeBrushSize={changeBrushSize}

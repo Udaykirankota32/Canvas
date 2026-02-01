@@ -3,7 +3,7 @@ import { getSocket } from "./websocket.jsx";
 import "./canvas.css";
 
 const Canvas = (props) => {
-  const { activeTool, activeColor, brushSize } = props;
+  const { activeTool, activeColor, brushSize, } = props;
   const socket = getSocket();
   const canvasRef = useRef(null);
   const isDrawing = useRef(false);
@@ -54,8 +54,16 @@ const Canvas = (props) => {
       context.closePath();
     };
 
+    const handleClearCanvas = () => {
+      context.clearRect(0, 0, canvas.width, canvas.height);
+    }
+
+
+  
+    socket.on("clear-canvas", handleClearCanvas);
     socket.on("usersCanvasHistory", handleCanvasHistory);
     socket.on("canvas-data", handleCanvasData);
+  
     socket.emit("request-for-history"); //requesting existing canvas data when a new user connects
 
     const beginDrawing = (e) => {
@@ -111,6 +119,7 @@ const Canvas = (props) => {
     canvas.addEventListener("mouseout", stopDrawing);
 
     return () => {
+      socket.off("clear-canvas", handleClearCanvas);
       socket.off("usersCanvasHistory", handleCanvasHistory);
       socket.off("canvas-data", handleCanvasData);
       canvas.removeEventListener("mousedown", beginDrawing);

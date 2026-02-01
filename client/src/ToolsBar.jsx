@@ -1,10 +1,11 @@
 import { useState } from "react";
 import { FaPaintBrush, FaEraser, FaArrowLeft } from "react-icons/fa";
 import ReactModal from "react-modal";
+import {getSocket} from "./websocket.jsx";
 import "./ToolsBar.css";
 
 const ToolsBar = (props) => {
-  const { changeActiveTool, changeActiveColor, changeBrushSize, setRoomMode } = props;
+  const { changeActiveTool, changeActiveColor, changeBrushSize, } = props;
   const [activeToolState, changeActiveToolState] = useState("brush");
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [roomMode, setRoomModeState] = useState(null); // "create" or "join"
@@ -34,7 +35,6 @@ const ToolsBar = (props) => {
   const confirmCreateRoom = () => {
     if (password === confirmPassword) {
       setCurrentRoomId(roomId);
-      setRoomMode(true);
       closeModal();
     } else {
       alert("Passwords do not match!");
@@ -44,7 +44,6 @@ const ToolsBar = (props) => {
   const confirmJoinRoom = () => {
     if (roomId && password) {
       setCurrentRoomId(roomId);
-      setRoomMode(true);
       closeModal();
     } else {
       alert("Please enter Room ID and Password!");
@@ -115,9 +114,8 @@ const ToolsBar = (props) => {
         <button
           className="bottomBtns ClearButton"
           onClick={() => {
-            const canvas = document.querySelector("canvas");
-            const context = canvas.getContext("2d");
-            context.clearRect(0, 0, canvas.width, canvas.height);
+            const socket = getSocket();
+            socket.emit("clear-canvas");
           }}
         >
           Clear
@@ -128,7 +126,6 @@ const ToolsBar = (props) => {
               className="bottomBtns ExitButton"
               onClick={() => {
                 setCurrentRoomId(null);
-                setRoomMode(false);
               }}
             >
               Exit Room
@@ -145,8 +142,8 @@ const ToolsBar = (props) => {
             Canvas Room
           </button>
         )}
-
-        <ReactModal
+        {/* Modal for Room Creation/Joining */}
+        <ReactModal  
           isOpen={modalIsOpen}
           onRequestClose={closeModal}
           className="ReactModal__Content"

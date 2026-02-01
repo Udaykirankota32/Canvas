@@ -1,9 +1,9 @@
 import express from "express";
-
-
 import { createServer } from "http";
 import { Server } from "socket.io";
 import cors from "cors";
+
+
 
 const app = express();
 app.use(cors())
@@ -31,11 +31,24 @@ io.on("connection",(socket)=>{
 
     })
 
+    socket.on("clear-canvas",()=>{
+        CanvaArray=[];           //clearing the server memory of canvas data
+
+       socket.emit("clear-canvas");  //notifying all connected clients to clear their canvas
+    })
+
+    
+
+    
     socket.on("disconnect",()=>{
         console.log(`User disconnected: ${socket.id}`)
-    })
+    }              )
+
+
    
 })
+
+
 
 
 
